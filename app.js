@@ -21,15 +21,15 @@
     const s = snapshot();
     $("#coins").textContent = s.coins;
     $("#tickets").textContent = s.tickets;
-    $("#englishToday").textContent = s.english === 4 ? "今日已完成 ✓" : `今日 ${s.english}/4`;
-    $("#chineseToday").textContent = s.chinese === 3 ? "今日已完成 ✓" : `今日 ${s.chinese}/3`;
-    $("#englishAction").textContent = s.english === 4 ? "回去看看我的伙伴" : s.english ? "继续今天的魔法课" : "进入魔法学院";
-    $("#chineseAction").textContent = s.chinese === 3 ? "回去看看探险护照" : s.chinese ? "继续今天的寻宝" : "翻开探险手账";
+    $("#englishToday").textContent = s.english === 4 ? "星星收集好啦 ✓" : s.english ? `今天发现 ${s.english} 颗星` : "等你来玩 ✦";
+    $("#chineseToday").textContent = s.chinese === 3 ? "宝物都找到啦 ✓" : s.chinese ? `今天找到 ${s.chinese} 件宝物` : "等你来寻宝 ✦";
+    $("#englishAction").textContent = s.english === 4 ? "回去看看我的伙伴" : s.english ? "继续我的魔法冒险" : "去魔法学院玩一会儿";
+    $("#chineseAction").textContent = s.chinese === 3 ? "回去看看探险护照" : s.chinese ? "继续和小獾寻宝" : "和小獾出发寻宝";
     $("#englishProgress").style.width = `${s.english / 4 * 100}%`;
     $("#chineseProgress").style.width = `${s.chinese / 3 * 100}%`;
   }
   const h = new Date().getHours();
-  $("#greeting").textContent = h < 11 ? "早上好，小小探险家" : h < 18 ? "欢迎回来，小小探险家" : "晚上好，今天也辛苦啦";
+  $("#greeting").textContent = h < 11 ? "早上好，今天想发现什么？" : h < 18 ? "欢迎回来，选个喜欢的冒险吧" : "晚上好，来玩一小会儿吧";
   $("#refreshBtn").onclick = paint;
   window.addEventListener("storage", paint);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) paint(); });
