@@ -1,0 +1,38 @@
+const { JSDOM } = require("jsdom");
+const fs = require("fs");
+const path = require("path");
+const ROOT = path.resolve(__dirname, "..");
+let pass = 0, fail = 0;
+const ok = (cond, msg) => { cond ? pass++ : fail++; console.log(`  ${cond ? "✓" : "✗ FAIL"} ${msg}`); };
+const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8").replace('<script src="app.js"></script>', "");
+const app = fs.readFileSync(path.join(ROOT, "app.js"), "utf8");
+const dom = new JSDOM(html, { runScripts: "dangerously", url: "https://nevergiveup0618.github.io/learning/", pretendToBeVisual: true });
+const { window: w } = dom;
+Object.defineProperty(w.navigator, "serviceWorker", { value: null, configurable: true });
+w.localStorage.setItem("sharedWallet_v1", JSON.stringify({ coins: 321, tickets: 7 }));
+const today = new Date(), key = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+w.localStorage.setItem("magicEnglish_v1", JSON.stringify({ daily: { date:key,t1:true,t2:true,t3:false,t4:false } }));
+w.localStorage.setItem("treasureWriting_v1", JSON.stringify({ daily: { date:key,quests:1,ideas:1,gems:1 } }));
+w.eval(app);
+const $ = s => w.document.querySelector(s);
+
+console.log("学习大厅真实 DOM 测试");
+ok($("#englishPortal").href === "https://nevergiveup0618.github.io/English/", "英语入口指向线上项目");
+ok($("#chinesePortal").href === "https://nevergiveup0618.github.io/Chinese/", "语文入口指向线上项目");
+ok($("#coins").textContent === "321" && $("#tickets").textContent === "7", "只读展示 sharedWallet_v1 钱包");
+ok($("#englishToday").textContent.includes("2/4"), "读取英语今日进度");
+ok($("#chineseToday").textContent.includes("已完成"), "读取语文今日进度");
+ok($("#englishProgress").style.width === "50%", "英语进度条正确");
+ok($("#chineseProgress").style.width === "100%", "语文进度条正确");
+ok($("#chineseAction").textContent.includes("探险护照"), "完成后给出有吸引力的返回文案");
+
+w.localStorage.setItem("sharedWallet_v1", "损坏的存档");
+w.localStorage.removeItem("magicEnglish_v1");
+w.localStorage.removeItem("treasureWriting_v1");
+w.learningHub.paint();
+ok($("#coins").textContent === "0" && $("#englishToday").textContent.includes("0/4"), "缺失或损坏存档时安全回退，不白屏");
+ok(!app.includes("setItem("), "导航页不写入两边的学习存档");
+ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v1"), "首版缓存号已设置");
+
+console.log(`\n结果: ${pass} 通过, ${fail} 失败`);
+if (fail) process.exit(1);

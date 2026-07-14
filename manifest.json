@@ -1,0 +1,10 @@
+{
+  "name": "我的学习星球",
+  "short_name": "学习星球",
+  "description": "魔法英语乐园与寻宝作文记的共同入口",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8f2f7",
+  "theme_color": "#f8f2f7",
+  "lang": "zh-CN"
+}
