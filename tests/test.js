@@ -18,7 +18,8 @@ const $ = s => w.document.querySelector(s);
 
 console.log("学习大厅真实 DOM 测试");
 ok($("#englishPortal").href === "https://nevergiveup0618.github.io/English/", "英语入口指向线上项目");
-ok($("#chinesePortal").href === "https://nevergiveup0618.github.io/Chinese/?v=20", "语文入口指向带当前缓存版本的线上项目");
+ok($("#chinesePortal").href === "https://nevergiveup0618.github.io/Chinese/?v=23", "语文入口指向带当前缓存版本的线上项目");
+ok(!!$(".baibai") && $(".baibai").getAttribute("src").includes("baibai-base"), "语文入口的伙伴已经全部换成白白");
 ok($("#coins").textContent === "321" && $("#tickets").textContent === "7", "只读展示 sharedWallet_v1 钱包");
 ok($("#englishToday").textContent.includes("2 颗星"), "把英语进度表达成发现星星，不催任务");
 ok($("#chineseToday").textContent.includes("宝物都找到啦"), "把语文完成度表达成找到宝物");
@@ -32,7 +33,7 @@ w.localStorage.removeItem("treasureWriting_v1");
 w.learningHub.paint();
 ok($("#coins").textContent === "0" && $("#englishToday").textContent.includes("等你来玩"), "缺失或损坏存档时轻松邀请，不白屏");
 ok(!app.includes("setItem("), "导航页不写入两边的学习存档");
-ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v3"), "缓存号已升级");
+ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v4"), "缓存号已升级");
 ok(!w.document.body.textContent.includes("辛苦") && !w.document.body.textContent.includes("未完成"), "★ 导航页不使用制造压力的文案");
 
 console.log(`\n结果: ${pass} 通过, ${fail} 失败`);

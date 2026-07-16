@@ -24,7 +24,7 @@
     $("#englishToday").textContent = s.english === 4 ? "星星收集好啦 ✓" : s.english ? `今天发现 ${s.english} 颗星` : "等你来玩 ✦";
     $("#chineseToday").textContent = s.chinese === 3 ? "宝物都找到啦 ✓" : s.chinese ? `今天找到 ${s.chinese} 件宝物` : "等你来寻宝 ✦";
     $("#englishAction").textContent = s.english === 4 ? "回去看看我的伙伴" : s.english ? "继续我的魔法冒险" : "去魔法学院玩一会儿";
-    $("#chineseAction").textContent = s.chinese === 3 ? "回去看看探险护照" : s.chinese ? "继续和小獾寻宝" : "和小獾出发寻宝";
+    $("#chineseAction").textContent = s.chinese === 3 ? "回去看看探险护照" : s.chinese ? "继续和白白寻宝" : "和白白出发寻宝";
     $("#englishProgress").style.width = `${s.english / 4 * 100}%`;
     $("#chineseProgress").style.width = `${s.chinese / 3 * 100}%`;
   }
