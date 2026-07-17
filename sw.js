@@ -1,5 +1,5 @@
-const CACHE = "learning-planet-v4";
-const FILES = ["./", "./index.html", "./app.js", "./manifest.json", "./assets/baibai-base.png"];
+const CACHE = "learning-planet-v5";
+const FILES = ["./", "./index.html", "./app.js", "./manifest.json", "./assets/baibai-holiday-cutout.webp"];
 self.addEventListener("install", e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())));
 self.addEventListener("activate", e => e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())));
 self.addEventListener("fetch", e => {

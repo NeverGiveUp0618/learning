@@ -23,6 +23,9 @@
     @media(max-width:720px){.shell{padding-left:16px;padding-right:16px}.top{align-items:flex-start}.brandText small{display:none}.wallet{flex-direction:column;gap:5px}.wallet span{padding:6px 9px;font-size:11px}.hero{padding:30px 5px 22px}.portals{grid-template-columns:1fr;gap:16px}.portal{min-height:282px;border-radius:25px}.portalContent{padding:22px}.portal h2{margin-top:15px;font-size:27px}.scene{min-height:105px}.castle{font-size:63px}.moon{width:76px;height:76px}.journal{width:130px;height:91px}.baibai{width:106px;height:106px}.journal:before{font-size:10px;width:87px}.go{padding-top:13px}}
     @media(max-width:360px){.brandText b{font-size:15px}.brandMark{width:39px;height:39px}.hero h1{font-size:28px}.portalContent{padding:19px}.subjectTag,.today{font-size:10px}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+    /* 导航页使用孩子指定的圣诞树帽披风白白；完整帽子不会被裁掉。 */
+    .chinese .baibai{right:1%;bottom:-10px;width:146px;height:146px}
+    @media(max-width:720px){.chinese .baibai{width:122px;height:122px}}
   </style>
 </head>
 <body>
@@ -52,7 +55,7 @@
         <div class="portalContent">
           <div class="subject"><span class="subjectTag">WRITING ADVENTURE</span><span class="today" id="chineseToday">等你来寻宝 ✦</span></div>
           <h2>寻宝作文记</h2><p>走遍城市、收集线索，把发现写进探险护照。</p>
-          <div class="scene"><div class="journal" aria-hidden="true"></div><img class="baibai" src="assets/baibai-base.png" alt="白白"></div>
+          <div class="scene"><div class="journal" aria-hidden="true"></div><img class="baibai" src="assets/baibai-holiday-cutout.webp" alt="戴圣诞树帽、穿绿色披风的白白"></div>
           <div class="go"><span id="chineseAction">翻开探险手账</span><span class="arrow">→</span></div><div class="progress"><i id="chineseProgress"></i></div>
         </div>
       </a>
