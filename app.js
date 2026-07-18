@@ -31,6 +31,11 @@
   const h = new Date().getHours();
   $("#greeting").textContent = h < 11 ? "早上好，今天想发现什么？" : h < 18 ? "欢迎回来，选个喜欢的冒险吧" : "晚上好，来玩一小会儿吧";
   $("#refreshBtn").onclick = paint;
+  document.querySelectorAll(".portal").forEach(portal => portal.addEventListener("click", () => {
+    $("#openingText").textContent = portal.dataset.opening || "正在打开冒险";
+    $("#openingMask").classList.add("on");
+  }));
+  window.addEventListener("pageshow", () => $("#openingMask").classList.remove("on"));
   window.addEventListener("storage", paint);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) paint(); });
   paint();
