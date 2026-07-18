@@ -36,7 +36,7 @@ w.localStorage.removeItem("treasureWriting_v1");
 w.learningHub.paint();
 ok($("#coins").textContent === "0" && $("#englishToday").textContent.includes("等你来玩"), "缺失或损坏存档时轻松邀请，不白屏");
 ok(!app.includes("setItem("), "导航页不写入两边的学习存档");
-ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v7"), "缓存号已升级");
+ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v8"), "缓存号已升级");
 ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes('fallback || fresh'), "★ 慢网络优先显示缓存页并在后台更新");
 ok(!w.document.body.textContent.includes("辛苦") && !w.document.body.textContent.includes("未完成"), "★ 导航页不使用制造压力的文案");
 
