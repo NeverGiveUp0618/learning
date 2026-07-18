@@ -22,7 +22,7 @@ ok($("#chinesePortal").href === "https://nevergiveup0618.github.io/Chinese/?v=32
 $("#englishPortal").addEventListener("click", e => e.preventDefault(), {once:true});
 $("#englishPortal").dispatchEvent(new w.MouseEvent("click", {bubbles:true,cancelable:true}));
 ok($("#openingMask").classList.contains("on") && $("#openingText").textContent.includes("英语"), "★ 点击入口立即显示正在打开，不再像没点中");
-ok(!!$(".baibai") && $(".baibai").getAttribute("src").includes("baibai-holiday-cutout.webp"), "语文入口换成戴圣诞树帽和绿色披风的白白抠图");
+ok(!!$(".baibai") && $(".baibai").getAttribute("src").includes("baibai-base.png"), "语文入口使用按实物照片重建的白白母版");
 ok($("#coins").textContent === "321" && $("#tickets").textContent === "7", "只读展示 sharedWallet_v1 钱包");
 ok($("#englishToday").textContent.includes("2 颗星"), "把英语进度表达成发现星星，不催任务");
 ok($("#chineseToday").textContent.includes("宝物都找到啦"), "把语文完成度表达成找到宝物");
@@ -36,7 +36,7 @@ w.localStorage.removeItem("treasureWriting_v1");
 w.learningHub.paint();
 ok($("#coins").textContent === "0" && $("#englishToday").textContent.includes("等你来玩"), "缺失或损坏存档时轻松邀请，不白屏");
 ok(!app.includes("setItem("), "导航页不写入两边的学习存档");
-ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v6"), "缓存号已升级");
+ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v7"), "缓存号已升级");
 ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes('fallback || fresh'), "★ 慢网络优先显示缓存页并在后台更新");
 ok(!w.document.body.textContent.includes("辛苦") && !w.document.body.textContent.includes("未完成"), "★ 导航页不使用制造压力的文案");
 
