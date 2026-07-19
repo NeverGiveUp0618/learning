@@ -33,7 +33,7 @@ ok($("#chineseAction").textContent.includes("探险护照"), "完成后给出有
 ok($("#mathPortal").href === "https://nevergiveup0618.github.io/Math/?v=6", "数学入口指向数学奇境当前缓存版本");
 ok($("#mathToday").textContent.includes("做对 5 题"), "数学显示今天做对题数（不设打卡）");
 ok($("#mathAction").textContent.includes("继续穿越数学史"), "已收集奇观时给出继续文案");
-ok(!!$(".mathBaibai") && !$("#mathPortal").textContent.includes("🦉"), "数学入口由白白陪伴，不再使用猫头鹰");
+ok(!!$(".pyramid") && $(".pyramid").getAttribute("aria-label") === "金色金字塔", "数学入口使用金字塔主题形象");
 ok(parseFloat($("#mathProgress").style.width) > 22 && parseFloat($("#mathProgress").style.width) < 23, "数学进度按已收集奇观 2/9 计算");
 $("#parentEntry").click();
 ok($("#parentOverlay").classList.contains("on") && $("#parentPin"), "导航页打开统一家长中心且输入框不自动聚焦");
@@ -49,7 +49,7 @@ w.learningHub.paint();
 ok($("#coins").textContent === "0" && $("#englishToday").textContent.includes("等你来玩"), "缺失或损坏存档时轻松邀请，不白屏");
 ok($("#mathToday").textContent.includes("等你来探险"), "数学缺档时轻松邀请");
 ok(!app.includes('setItem("magicEnglish_v1"') && !app.includes('setItem("treasureWriting_v1"') && !app.includes('setItem("mathQuest_v1"'), "导航页只调整共享钱包，不改写三科学习存档");
-ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v10"), "缓存号已升级");
+ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v11"), "缓存号已升级");
 ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes('fallback || fresh'), "★ 慢网络优先显示缓存页并在后台更新");
 ok(!w.document.body.textContent.includes("辛苦") && !w.document.body.textContent.includes("未完成"), "★ 导航页不使用制造压力的文案");
 
