@@ -45,17 +45,18 @@
     const maSec=k=>Object.values((ma.timeLog||{})[k]||{}).reduce((a,v)=>a+(Number(v)||0),0);
     const total=(fn)=>days.reduce((a,k)=>a+fn(k),0),today=days[6];
     return {en,cn,ma,wallet,days,enSec,cnSec,maSec,subjects:[
-      {id:"en",icon:"🏰",name:"英语",today:enSec(today),week:total(enSec),main:`${Object.keys(en.srs||{}).length} 个词进入学习`,extra:`累计答对 ${Object.values(en.history||{}).reduce((a,h)=>a+(Number(h.right)||0),0)} 题`,url:"https://nevergiveup0618.github.io/English/"},
-      {id:"cn",icon:"🗺️",name:"语文",today:cnSec(today),week:total(cnSec),main:`${Object.keys(cn.essays||{}).length} 篇作文记录`,extra:`宝库 ${Object.keys(cn.gems||{}).length} 条`,url:"https://nevergiveup0618.github.io/Chinese/"},
-      {id:"ma",icon:"🔭",name:"数学",today:maSec(today),week:total(maSec),main:`累计做对 ${Number(ma.totalRight)||0} 题`,extra:`奇观 ${Object.keys(ma.wonders||{}).length}/9 · 待复习 ${Object.values(ma.srs||{}).filter(x=>x.due<=today).length}`,url:"https://nevergiveup0618.github.io/Math/?parent=1"}
+      {id:"en",icon:"🏰",name:"英语",today:enSec(today),week:total(enSec),main:`${Object.keys(en.srs||{}).length} 个词进入学习`,extra:`错词 ${Object.keys(en.wrong||{}).length} 个 · 阶段卷 ${Object.keys(en.stageExams||{}).length} 次`,next:Object.keys(en.wrong||{}).length?"先看错词本":"按当前单元继续即可",url:"https://nevergiveup0618.github.io/English/?parent=1"},
+      {id:"cn",icon:"🗺️",name:"语文",today:cnSec(today),week:total(cnSec),main:`${Object.keys(cn.essays||{}).length} 篇作文记录`,extra:`宝库 ${(cn.gems||[]).length} 条 · 阅读 ${Object.keys(cn.readings||{}).filter(k=>cn.readings[k]?.done).length}/200`,next:Object.values(cn.essays||{}).some(x=>x.done&&!x.reviewed)?"有作文等待家长批阅":"继续阅读与仿写迁移",url:"https://nevergiveup0618.github.io/Chinese/?parent=1"},
+      {id:"ma",icon:"🔭",name:"数学",today:maSec(today),week:total(maSec),main:`累计做对 ${Number(ma.totalRight)||0} 题`,extra:`奇观 ${Object.keys(ma.wonders||{}).length}/9 · 待复习 ${Object.values(ma.srs||{}).filter(x=>x.due<=today).length}`,next:Object.values(ma.srs||{}).some(x=>x.due<=today)?"先走个性化复习路线":"可自由探索思维挑战",url:"https://nevergiveup0618.github.io/Math/?parent=1"}
     ]};
   }
-  let parentOK=false;
+  const PARENT_AUTH_KEY="learningParentAuth_v1";
+  let parentOK=sessionStorage.getItem(PARENT_AUTH_KEY)==="1";
   function renderParent(){
     const body=$("#parentBody");
-    if(!parentOK){body.innerHTML=`<div class="parentGate"><div style="font-size:38px">🔐</div><h2>家长验证</h2><p style="color:#8b7f92;font-size:13px;line-height:1.7">孩子的学习记录只在本机汇总展示。点击输入框后才会弹出键盘。</p><input id="parentPin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••"><button class="parentBtn" id="parentGo">进入家长中心</button><div id="parentMsg" style="color:#c06f82;font-size:12px;margin-top:10px"></div></div>`;const go=()=>{if($("#parentPin").value==="223826"){parentOK=true;renderParent()}else $("#parentMsg").textContent="密码不正确"};$("#parentGo").onclick=go;$("#parentPin").onkeydown=e=>{if(e.key==="Enter")go()};return;}
+    if(!parentOK){body.innerHTML=`<div class="parentGate"><div style="font-size:38px">🔐</div><h2>家长验证</h2><p style="color:#8b7f92;font-size:13px;line-height:1.7">验证一次后，本次浏览器会话内往返三科不再重复输入。</p><input id="parentPin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••"><button class="parentBtn" id="parentGo">进入家长中心</button><div id="parentMsg" style="color:#c06f82;font-size:12px;margin-top:10px"></div></div>`;const go=()=>{if($("#parentPin").value==="223826"){parentOK=true;sessionStorage.setItem(PARENT_AUTH_KEY,"1");renderParent()}else $("#parentMsg").textContent="密码不正确"};$("#parentGo").onclick=go;$("#parentPin").onkeydown=e=>{if(e.key==="Enter")go()};return;}
     const d=parentData(),all=d.subjects.reduce((a,x)=>a+x.week,0),daily=d.days.map(k=>d.enSec(k)+d.cnSec(k)+d.maSec(k)),max=Math.max(60,...daily);
-    body.innerHTML=`<div class="reportGrid">${d.subjects.map(s=>`<article class="reportCard"><div class="subjectHead"><h3>${s.icon} ${s.name}</h3><span>${fmt(s.today)}</span></div><div class="big">${fmt(s.week)}</div><div class="sub">最近7天有效学习时间</div><div class="metric"><span>学习成果</span><b>${s.main}</b></div><div class="metric"><span>补充</span><b>${s.extra}</b></div><a href="${s.url}">进入${s.name}详细后台 →</a></article>`).join("")}</div>
+    body.innerHTML=`<div class="reportGrid">${d.subjects.map(s=>`<article class="reportCard"><div class="subjectHead"><h3>${s.icon} ${s.name}</h3><span>${fmt(s.today)}</span></div><div class="big">${fmt(s.week)}</div><div class="sub">最近7天有效学习时间</div><div class="metric"><span>学习成果</span><b>${s.main}</b></div><div class="metric"><span>学习档案</span><b>${s.extra}</b></div><div class="metric"><span>建议关注</span><b>${s.next}</b></div><a href="${s.url}">进入${s.name}详细后台 →</a></article>`).join("")}</div>
       <div class="walletAdmin"><div class="walletNums"><small>三科共享钱包</small><br><b>🪙 ${d.wallet.coins||0}　🎟️ ${d.wallet.tickets||0}</b></div><div class="walletButtons"><button data-coin="10">+10金币</button><button data-coin="50">+50金币</button><button data-coin="-10">−10金币</button><button data-ticket="1">+1转盘券</button></div></div>
       <div class="archive"><div class="archiveHead"><div><b>最近7天学习档案</b><div class="sub">三科合计 ${fmt(all)}，只记录有效前台时间</div></div><button class="parentBtn ghost" id="saveReport">保存报告图片</button></div><div class="weekBars">${d.days.map((k,i)=>`<div class="dayBar"><i style="height:${Math.max(4,daily[i]/max*76)}px"></i>${k.slice(5)}<br>${fmt(daily[i])}</div>`).join("")}</div></div>`;
     body.querySelectorAll("[data-coin]").forEach(b=>b.onclick=()=>adjustWallet(Number(b.dataset.coin),0));body.querySelectorAll("[data-ticket]").forEach(b=>b.onclick=()=>adjustWallet(0,Number(b.dataset.ticket)));$("#saveReport").onclick=saveReportImage;
@@ -67,6 +68,7 @@
   $("#refreshBtn").onclick = paint;
   $("#parentEntry").onclick=()=>{$("#parentOverlay").classList.add("on");renderParent()};
   $("#parentClose").onclick=()=>$("#parentOverlay").classList.remove("on");
+  if(new URLSearchParams(location.search).get("parent")==="1"){$("#parentOverlay").classList.add("on");renderParent();}
   document.querySelectorAll(".portal").forEach(portal => portal.addEventListener("click", () => {
     $("#openingText").textContent = portal.dataset.opening || "正在打开冒险";
     $("#openingMask").classList.add("on");
