@@ -8,14 +8,18 @@
   const read = (key, fallback) => {
     try { return JSON.parse(localStorage.getItem(key) || "null") || fallback; } catch (_) { return fallback; }
   };
+  const MATH_WONDERS = 5;   // 数学奇境的文明总数（收集进度分母）
   function snapshot() {
     const wallet = read("sharedWallet_v1", { coins: 0, tickets: 0 });
-    const en = read("magicEnglish_v1", {}), cn = read("treasureWriting_v1", {});
+    const en = read("magicEnglish_v1", {}), cn = read("treasureWriting_v1", {}), ma = read("mathQuest_v1", {});
     const ed = en.daily && en.daily.date === todayStr() ? en.daily : {};
     const cd = cn.daily && cn.daily.date === todayStr() ? cn.daily : {};
     const english = [ed.t1, ed.t2, ed.t3, ed.t4].filter(Boolean).length;
     const chinese = [cd.quests >= 1, cd.ideas >= 1 || cd.quests >= 2, cd.gems >= 1].filter(Boolean).length;
-    return { coins: Number(wallet.coins) || 0, tickets: Number(wallet.tickets) || 0, english, chinese };
+    // 数学不设每天打卡：用「今天做对题数」当鼓励、用「已收集奇观」当长期进度
+    const mathToday = ma.daily && ma.daily.date === todayStr() ? (Number(ma.daily.correct) || 0) : 0;
+    const mathWonders = ma.wonders ? Object.keys(ma.wonders).length : 0;
+    return { coins: Number(wallet.coins) || 0, tickets: Number(wallet.tickets) || 0, english, chinese, mathToday, mathWonders };
   }
   function paint() {
     const s = snapshot();
@@ -27,6 +31,9 @@
     $("#chineseAction").textContent = s.chinese === 3 ? "回去看看探险护照" : s.chinese ? "继续和白白寻宝" : "和白白出发寻宝";
     $("#englishProgress").style.width = `${s.english / 4 * 100}%`;
     $("#chineseProgress").style.width = `${s.chinese / 3 * 100}%`;
+    $("#mathToday").textContent = s.mathToday ? `今天做对 ${s.mathToday} 题` : "等你来探险 ✦";
+    $("#mathAction").textContent = s.mathWonders ? "继续穿越数学史" : "出发去古埃及";
+    $("#mathProgress").style.width = `${s.mathWonders / MATH_WONDERS * 100}%`;
   }
   const h = new Date().getHours();
   $("#greeting").textContent = h < 11 ? "早上好，今天想发现什么？" : h < 18 ? "欢迎回来，选个喜欢的冒险吧" : "晚上好，来玩一小会儿吧";
