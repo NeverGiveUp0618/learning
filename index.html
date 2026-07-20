@@ -31,6 +31,8 @@
     /* 导航页使用孩子指定的圣诞树帽披风白白；完整帽子不会被裁掉。 */
     .chinese .baibai{right:1%;bottom:-10px;width:146px;height:146px}
     @media(max-width:720px){.chinese .baibai{width:122px;height:122px}}
+    .journeyGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.journeySubject{padding:13px;border-radius:17px;background:#faf7fc;border:1px solid #eee5f1}.journeySubject>b,.journeySubject>small,.journeySubject>span{display:block}.journeySubject>small{min-height:30px;margin:4px 0 8px;color:#9a8da0;font-size:10px;line-height:1.45}.journeySubject>span{display:flex;justify-content:space-between;gap:6px;padding:6px 0;border-top:1px dashed #e9deec;font-size:11px;font-weight:800}.journeySubject i{font-style:normal;color:#9b8ba2;font-size:9px;white-space:nowrap}.parentAdvice{margin-top:11px;padding:10px 12px;border-radius:13px;background:#fff8e9;color:#8b744f;font-size:11px;line-height:1.65}.healthGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:12px}.healthGrid span{padding:12px;border-radius:15px;background:#f8f9ff}.healthGrid b,.healthGrid small{display:block}.healthGrid small{margin-top:3px;color:#8c8194;font-size:10px;line-height:1.45}.backupActions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.restoreBox{margin-top:12px;padding:12px;border-radius:16px;background:#f7f1f8;text-align:center}.restoreBox[hidden]{display:none}.restoreBox>span{display:block;margin:9px;color:#9a8da0;font-size:10px}.restoreBox textarea{width:100%;min-height:85px;padding:10px;border:1px solid #ddcfe2;border-radius:12px;resize:vertical;font:11px/1.5 monospace}.restoreBox small{display:block;margin-top:8px;color:#a45f72}.backupFile{display:block;padding:11px;border:1px dashed #b99bc4;border-radius:12px;color:#765e80;font-size:12px;font-weight:800}.backupFile input{display:block;width:100%;margin-top:7px;font-size:10px}.portal,.reportCard,.archive{content-visibility:auto;contain-intrinsic-size:280px}
+    @media(max-width:650px){.journeyGrid,.backupActions{grid-template-columns:1fr}.healthGrid{grid-template-columns:1fr 1fr}.journeySubject>small{min-height:0}.backupActions .parentBtn{width:100%}}
   </style>
 </head>
 <body>
@@ -47,7 +49,7 @@
     </section>
 
     <section class="portals" aria-label="选择学习项目">
-      <a class="portal english" id="englishPortal" href="https://nevergiveup0618.github.io/English/?v=62" data-opening="正在打开魔法英语乐园">
+      <a class="portal english" id="englishPortal" href="https://nevergiveup0618.github.io/English/?v=64" data-opening="正在打开魔法英语乐园">
         <div class="portalContent">
           <div class="subject"><span class="subjectTag">MAGIC ENGLISH</span><span class="today" id="englishToday">等你来玩 ✦</span></div>
           <h2>魔法英语乐园</h2><p>听句子、闯关卡，和伙伴一起收集魔法。</p>
@@ -56,7 +58,7 @@
         </div>
       </a>
 
-      <a class="portal chinese" id="chinesePortal" href="https://nevergiveup0618.github.io/Chinese/?v=40" data-opening="正在打开寻宝作文记">
+      <a class="portal chinese" id="chinesePortal" href="https://nevergiveup0618.github.io/Chinese/?v=41" data-opening="正在打开寻宝作文记">
         <div class="portalContent">
           <div class="subject"><span class="subjectTag">WRITING ADVENTURE</span><span class="today" id="chineseToday">等你来寻宝 ✦</span></div>
           <h2>寻宝作文记</h2><p>走遍城市、收集线索，把发现写进探险护照。</p>
@@ -65,7 +67,7 @@
         </div>
       </a>
 
-      <a class="portal math" id="mathPortal" href="https://nevergiveup0618.github.io/Math/?v=12" data-opening="正在打开数学奇境">
+      <a class="portal math" id="mathPortal" href="https://nevergiveup0618.github.io/Math/?v=14" data-opening="正在打开数学奇境">
         <div class="portalContent">
           <div class="subject"><span class="subjectTag">MATH QUEST</span><span class="today" id="mathToday">等你来探险 ✦</span></div>
           <h2>数学奇境</h2><p>穿越数学史，闯过金字塔、神庙与算筹，收集数学奇观。</p>
