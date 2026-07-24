@@ -20,7 +20,7 @@ const $ = s => w.document.querySelector(s);
 
 console.log("学习大厅真实 DOM 测试");
 ok($("#englishPortal").href === "https://nevergiveup0618.github.io/English/?v=66", "英语入口指向当前缓存版本");
-ok($("#chinesePortal").href === "https://nevergiveup0618.github.io/Chinese/?v=43", "语文入口指向当前缓存版本");
+ok($("#chinesePortal").href === "https://nevergiveup0618.github.io/Chinese/?v=44", "语文入口指向当前缓存版本");
 $("#englishPortal").addEventListener("click", e => e.preventDefault(), {once:true});
 $("#englishPortal").dispatchEvent(new w.MouseEvent("click", {bubbles:true,cancelable:true}));
 ok($("#openingMask").classList.contains("on") && $("#openingText").textContent.includes("英语"), "★ 点击入口立即显示正在打开，不再像没点中");
@@ -61,7 +61,7 @@ w.learningHub.paint();
 ok($("#coins").textContent === "0" && $("#englishToday").textContent.includes("等你来玩"), "缺失或损坏存档时轻松邀请，不白屏");
 ok($("#mathToday").textContent.includes("等你来探险"), "数学缺档时轻松邀请");
 ok(!app.includes('setItem("treasureWriting_v1"') && !app.includes('setItem("mathQuest_v1"'), "导航页除家长明确设定的英语工坊时间外，不改写学习存档");
-ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v16"), "缓存号已升级");
+ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v17"), "缓存号已升级");
 ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes('fallback || fresh'), "★ 慢网络优先显示缓存页并在后台更新");
 ok(!w.document.body.textContent.includes("辛苦") && !w.document.body.textContent.includes("未完成"), "★ 导航页不使用制造压力的文案");
 
