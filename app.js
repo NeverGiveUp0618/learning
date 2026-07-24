@@ -9,7 +9,7 @@
     try { return JSON.parse(localStorage.getItem(key) || "null") || fallback; } catch (_) { return fallback; }
   };
   const JOURNEY_KEY="sharedLearningJourney_v1",BACKUP_AT_KEY="learningLastBackup_v1";
-  const SCREEN_NAMES={home:"首页",map:"地图",unit:"单元",study:"学单词",review:"复习",arcade:"游戏厅",phonics:"自然拼读",reward:"奖励屋",design:"设计工坊",reading:"阅读书架",reader:"阅读答题",stop:"城市",cards:"知识卡",write:"写作练习",idea:"脑洞",gems:"宝库",essay:"作文",essayWrite:"作文写作",station:"数学站点",core:"课内夯实",extend:"课外拓展",challenge:"思维挑战",challengeRun:"挑战答题",exam:"阶段测验",rewards:"数学宝库"};
+  const SCREEN_NAMES={home:"首页",map:"地图",unit:"单元",study:"学单词",review:"复习",arcade:"游戏厅",phonics:"自然拼读",reward:"奖励屋",design:"设计工坊",reading:"阅读书架",reader:"阅读答题",models:"原创作文库",modelDetail:"范文与改写",stop:"城市",cards:"知识卡",write:"写作练习",idea:"脑洞",gems:"宝库",essay:"作文",essayWrite:"作文写作",station:"数学站点",core:"课内夯实",extend:"课外拓展",challenge:"思维挑战",challengeRun:"挑战答题",exam:"阶段测验",rewards:"数学宝库"};
   const MATH_WONDERS = 9;   // 数学奇境的文明总数（收集进度分母）
   function snapshot() {
     const wallet = read("sharedWallet_v1", { coins: 0, tickets: 0 });
