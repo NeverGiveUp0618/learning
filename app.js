@@ -9,15 +9,17 @@
     try { return JSON.parse(localStorage.getItem(key) || "null") || fallback; } catch (_) { return fallback; }
   };
   const JOURNEY_KEY="sharedLearningJourney_v1",BACKUP_AT_KEY="learningLastBackup_v1";
-  const SCREEN_NAMES={home:"首页",map:"地图",unit:"单元",study:"学单词",review:"复习",arcade:"游戏厅",phonics:"自然拼读",reward:"奖励屋",design:"设计工坊",reading:"阅读书架",reader:"阅读答题",models:"原创作文库",modelDetail:"范文与改写",stop:"城市",cards:"知识卡",write:"写作练习",idea:"脑洞",gems:"宝库",essay:"作文",essayWrite:"作文写作",station:"数学站点",core:"课内夯实",extend:"课外拓展",challenge:"思维挑战",challengeRun:"挑战答题",exam:"阶段测验",rewards:"数学宝库"};
-  const MATH_WONDERS = 9;   // 数学奇境的文明总数（收集进度分母）
+  const SCREEN_NAMES={home:"首页",map:"地图",unit:"单元",study:"学单词",review:"复习",arcade:"游戏厅",phonics:"自然拼读",reward:"奖励屋",design:"设计工坊",reading:"阅读书架",reader:"阅读答题",models:"原创作文库",modelDetail:"范文与改写",stop:"城市",cards:"知识卡",write:"写作练习",idea:"脑洞",gems:"宝库",essay:"作文",essayWrite:"作文写作",station:"数学站点",core:"课内夯实",extend:"课外拓展",challenge:"思维挑战",challengeRun:"挑战答题",exam:"阶段测验",rewards:"数学宝库",pk:"PK擂台",pkRun:"擂台对战",think:"思维乐园",thinkGame:"思维游戏",pinyin:"拼音闯关",pinyinLevel:"拼音讲解",pinyinQuiz:"拼音练习"};
+  const MATH_WONDERS = 13;  // 数学奇境的文明总数（收集进度分母）
+  /* ⚠️ 分母写死过一次 9，数学站 2026-08-30 扩到 13 个站后这里没跟着改，
+     进度条一直是错的。改数学站 CIVS 数量时必须同步这里，tests 有断言守着。 */
   function snapshot() {
     const wallet = read("sharedWallet_v1", { coins: 0, tickets: 0 });
     const en = read("magicEnglish_v1", {}), cn = read("treasureWriting_v1", {}), ma = read("mathQuest_v1", {});
     const ed = en.daily && en.daily.date === todayStr() ? en.daily : {};
     const cd = cn.daily && cn.daily.date === todayStr() ? cn.daily : {};
     const english = [ed.t1, ed.t2, ed.t3, ed.t4].filter(Boolean).length;
-    const chinese = [cd.quests >= 1, cd.ideas >= 1 || cd.quests >= 2, cd.gems >= 1].filter(Boolean).length;
+    const chinese = [cd.quests >= 1 || cd.pinyin >= 1, cd.ideas >= 1 || cd.quests >= 2 || cd.pinyin >= 2, cd.gems >= 1].filter(Boolean).length;
     // 数学不设每天打卡：用「今天做对题数」当鼓励、用「已收集奇观」当长期进度
     const mathToday = ma.daily && ma.daily.date === todayStr() ? (Number(ma.daily.correct) || 0) : 0;
     const mathWonders = ma.wonders ? Object.keys(ma.wonders).length : 0;
@@ -50,8 +52,8 @@
     const total=(fn)=>days.reduce((a,k)=>a+fn(k),0),today=days[6];
     return {en,cn,ma,wallet,days,enSec,cnSec,maSec,subjects:[
       {id:"en",icon:"🏰",name:"英语",today:enSec(today),week:total(enSec),main:`${Object.keys(en.srs||{}).length} 个词进入学习`,extra:`错词 ${Object.keys(en.wrong||{}).length} 个 · 阶段卷 ${Object.keys(en.stageExams||{}).length} 次`,next:Object.keys(en.wrong||{}).length?"先看错词本":"按当前单元继续即可",url:"https://nevergiveup0618.github.io/English/?parent=1"},
-      {id:"cn",icon:"🗺️",name:"语文",today:cnSec(today),week:total(cnSec),main:`${Object.keys(cn.essays||{}).length} 篇作文记录`,extra:`宝库 ${(cn.gems||[]).length} 条 · 阅读 ${Object.keys(cn.readings||{}).filter(k=>cn.readings[k]?.done).length}/200`,next:Object.values(cn.essays||{}).some(x=>x.done&&!x.reviewed)?"有作文等待家长批阅":"继续阅读与仿写迁移",url:"https://nevergiveup0618.github.io/Chinese/?parent=1"},
-      {id:"ma",icon:"🔭",name:"数学",today:maSec(today),week:total(maSec),main:`累计做对 ${Number(ma.totalRight)||0} 题`,extra:`奇观 ${Object.keys(ma.wonders||{}).length}/9 · 待复习 ${Object.values(ma.srs||{}).filter(x=>x.due<=today).length}`,next:Object.values(ma.srs||{}).some(x=>x.due<=today)?"先走个性化复习路线":"可自由探索思维挑战",url:"https://nevergiveup0618.github.io/Math/?parent=1"}
+      {id:"cn",icon:"🗺️",name:"语文",today:cnSec(today),week:total(cnSec),main:`${Object.keys(cn.essays||{}).length} 篇作文记录`,extra:`宝库 ${(cn.gems||[]).length} 条 · 阅读 ${Object.keys(cn.readings||{}).filter(k=>cn.readings[k]?.done).length}/200 · 拼音 ${Object.values((cn.pinyin||{}).levels||{}).filter(x=>x&&x.passed).length}/6 关`,next:Object.values(cn.essays||{}).some(x=>x.done&&!x.reviewed)?"有作文等待家长批阅":"继续阅读与仿写迁移",url:"https://nevergiveup0618.github.io/Chinese/?parent=1"},
+      {id:"ma",icon:"🔭",name:"数学",today:maSec(today),week:total(maSec),main:`累计做对 ${Number(ma.totalRight)||0} 题 · 擂台 ${(ma.pk&&ma.pk.win)||0} 胜`,extra:`奇观 ${Object.keys(ma.wonders||{}).length}/${MATH_WONDERS} · 待复习 ${Object.values(ma.srs||{}).filter(x=>x.due<=today).length}`,next:Object.values(ma.srs||{}).some(x=>x.due<=today)?"先走个性化复习路线":"可自由探索思维挑战",url:"https://nevergiveup0618.github.io/Math/?parent=1"}
     ]};
   }
   function journeyData(){const cutoff=Date.now()-14*86400000,rows=read(JOURNEY_KEY,[]).filter(x=>x&&x.at>=cutoff&&["en","cn","ma"].includes(x.subject));const by={en:{},cn:{},ma:{}};rows.forEach(x=>{const k=SCREEN_NAMES[x.screen]||x.screen||"其他",v=by[x.subject][k]||(by[x.subject][k]={visits:0,seconds:0,quick:0});v.visits++;v.seconds+=Number(x.seconds)||0;if((Number(x.seconds)||0)<12)v.quick++});const top=s=>Object.entries(by[s]).sort((a,b)=>b[1].seconds-a[1].seconds).slice(0,3);return{rows,by,top,last:rows.reduce((m,x)=>Math.max(m,Number(x.at)||0),0)};}

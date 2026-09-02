@@ -35,7 +35,13 @@ ok($("#mathPortal").href === "https://nevergiveup0618.github.io/Math/?v=15", "�
 ok($("#mathToday").textContent.includes("做对 5 题"), "数学显示今天做对题数（不设打卡）");
 ok($("#mathAction").textContent.includes("继续穿越数学史"), "已收集奇观时给出继续文案");
 ok(!!$(".pyramid") && $(".pyramid").getAttribute("aria-label") === "金色金字塔", "数学入口使用金字塔主题形象");
-ok(parseFloat($("#mathProgress").style.width) > 22 && parseFloat($("#mathProgress").style.width) < 23, "数学进度按已收集奇观 2/9 计算");
+/* ⚠️ 分母＝数学站的 CIVS 数量（现在 13 站）。曾经写死 9，数学站扩站后没跟着改，
+   进度条一路错。改数学站站点数时，MATH_WONDERS 和这条断言要一起改。 */
+ok(Math.abs(parseFloat($("#mathProgress").style.width) - 2 / 13 * 100) < 0.5, "数学进度按已收集奇观 2/13 计算");
+const hubSrc = app;
+ok(/const MATH_WONDERS = 13\b/.test(hubSrc), "★ 奇观分母与数学站 13 个文明站对得上");
+ok(["pk","pkRun","think","thinkGame","pinyin","pinyinLevel","pinyinQuiz"].every(k => new RegExp("\\b" + k + ':"').test(hubSrc)), "★ 新板块的屏幕都有中文名（家长报告不会显示英文 id）");
+ok(hubSrc.includes("cd.pinyin"), "★ 语文看板认拼音闯关");
 $("#parentEntry").click();
 ok($("#parentOverlay").classList.contains("on") && $("#parentPin"), "导航页打开统一家长中心且输入框不自动聚焦");
 $("#parentPin").value="223826";$("#parentGo").click();
@@ -61,7 +67,7 @@ w.learningHub.paint();
 ok($("#coins").textContent === "0" && $("#englishToday").textContent.includes("等你来玩"), "缺失或损坏存档时轻松邀请，不白屏");
 ok($("#mathToday").textContent.includes("等你来探险"), "数学缺档时轻松邀请");
 ok(!app.includes('setItem("treasureWriting_v1"') && !app.includes('setItem("mathQuest_v1"'), "导航页除家长明确设定的英语工坊时间外，不改写学习存档");
-ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v17"), "缓存号已升级");
+ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v18"), "缓存号已升级");
 ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes('fallback || fresh'), "★ 慢网络优先显示缓存页并在后台更新");
 ok(!w.document.body.textContent.includes("辛苦") && !w.document.body.textContent.includes("未完成"), "★ 导航页不使用制造压力的文案");
 
