@@ -59,6 +59,36 @@ const backup=w.learningHub.backupCode(w.learningHub.makeBackup());w.localStorage
 ok(w.learningHub.restoreBackup(backup) && JSON.parse(w.localStorage.getItem("sharedWallet_v1")).coins===321,"三科总备份通过校验后可完整恢复共享数据");
 ok(!w.learningHub.restoreBackup(backup.slice(0,-4)+"xxxx"),"损坏或不完整的三科备份会被拒绝");
 
+/* ⚠️ 2026-09-15：备份原来只含 5 个 key，漏掉了白白的造型（sharedPet_v1）——
+   孩子在英语衣橱里搭了一身装扮，一恢复备份全没了。这里做一次真往返验证。 */
+w.localStorage.setItem("sharedPet_v1", JSON.stringify({ v:1, name:"白白", body:"https://nevergiveup0618.github.io/English/assets/baibai-base.png",
+  items:[{ art:"https://nevergiveup0618.github.io/English/assets/outfits/cape-red.svg", x:50, y:60, s:1.2, r:0, base:.4 }] }));
+w.localStorage.setItem("sharedSubjectBalance_v1", JSON.stringify({ date:"2026-09-15", en:true, cn:true, ma:false, two:true, three:false }));
+w.localStorage.setItem("sharedLearningJourney_v1", JSON.stringify([{ subject:"ma", screen:"pk", day:"2026-09-15", seconds:120, at:Date.now() }]));
+const bk2 = w.learningHub.backupCode(w.learningHub.makeBackup());
+w.localStorage.removeItem("sharedPet_v1");
+w.localStorage.removeItem("sharedSubjectBalance_v1");
+w.localStorage.removeItem("sharedLearningJourney_v1");
+ok(w.learningHub.restoreBackup(bk2), "含白白造型的备份能通过校验");
+const pet = JSON.parse(w.localStorage.getItem("sharedPet_v1") || "null");
+ok(pet && pet.items && pet.items.length === 1 && pet.items[0].art.includes("cape-red"),
+   "★ 恢复后白白身上的装扮还在（曾经整份丢失）");
+ok(JSON.parse(w.localStorage.getItem("sharedSubjectBalance_v1") || "null")?.two === true,
+   "★ 三科均衡标记一起恢复（否则当天能重复领 +20 金币）");
+ok((JSON.parse(w.localStorage.getItem("sharedLearningJourney_v1") || "[]")).length === 1,
+   "★ 学习足迹一起恢复（家长报告的「最近14天去过哪儿」靠它）");
+
+/* 自定义底图是 base64，动辄 1MB+，会把备份码撑到复制不动 */
+w.localStorage.setItem("sharedPet_v1", JSON.stringify({ v:1, name:"白白", body:"data:image/png;base64," + "A".repeat(200000), items:[{ e:"🎩", x:50, y:20, s:1, r:0, base:.3 }] }));
+const big = w.learningHub.makeBackup();
+ok(!JSON.parse(big).data.sharedPet_v1.body.startsWith("data:"), "★ 超大自定义底图不进备份码（保留装扮，底图用默认）");
+ok(JSON.parse(big).data.sharedPet_v1.items.length === 1, "剔掉底图但装扮照样保留");
+ok(!w.localStorage.getItem("sharedPet_v1").startsWith("{\"v\":1,\"name\":\"白白\",\"body\":\"\"}"), "makeBackup 不改写本地存档");
+
+const JOURNEY_LONG = Array.from({ length: 400 }, (_, i) => ({ subject:"cn", screen:"pinyin", day:"2026-09-15", seconds:5, at: Date.now() + i }));
+w.localStorage.setItem("sharedLearningJourney_v1", JSON.stringify(JOURNEY_LONG));
+ok(JSON.parse(w.learningHub.makeBackup()).data.sharedLearningJourney_v1.length === 200, "★ 学习足迹只备份最近 200 条，备份码不会越滚越大");
+
 w.localStorage.setItem("sharedWallet_v1", "损坏的存档");
 w.localStorage.removeItem("magicEnglish_v1");
 w.localStorage.removeItem("treasureWriting_v1");
@@ -67,7 +97,7 @@ w.learningHub.paint();
 ok($("#coins").textContent === "0" && $("#englishToday").textContent.includes("等你来玩"), "缺失或损坏存档时轻松邀请，不白屏");
 ok($("#mathToday").textContent.includes("等你来探险"), "数学缺档时轻松邀请");
 ok(!app.includes('setItem("treasureWriting_v1"') && !app.includes('setItem("mathQuest_v1"'), "导航页除家长明确设定的英语工坊时间外，不改写学习存档");
-ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v18"), "缓存号已升级");
+ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes("learning-planet-v19"), "缓存号已升级");
 ok(fs.readFileSync(path.join(ROOT,"sw.js"),"utf8").includes('fallback || fresh'), "★ 慢网络优先显示缓存页并在后台更新");
 ok(!w.document.body.textContent.includes("辛苦") && !w.document.body.textContent.includes("未完成"), "★ 导航页不使用制造压力的文案");
 

@@ -58,9 +58,19 @@
   }
   function journeyData(){const cutoff=Date.now()-14*86400000,rows=read(JOURNEY_KEY,[]).filter(x=>x&&x.at>=cutoff&&["en","cn","ma"].includes(x.subject));const by={en:{},cn:{},ma:{}};rows.forEach(x=>{const k=SCREEN_NAMES[x.screen]||x.screen||"其他",v=by[x.subject][k]||(by[x.subject][k]={visits:0,seconds:0,quick:0});v.visits++;v.seconds+=Number(x.seconds)||0;if((Number(x.seconds)||0)<12)v.quick++});const top=s=>Object.entries(by[s]).sort((a,b)=>b[1].seconds-a[1].seconds).slice(0,3);return{rows,by,top,last:rows.reduce((m,x)=>Math.max(m,Number(x.at)||0),0)};}
   function safeParse(key){try{const raw=localStorage.getItem(key);return raw?{ok:true,value:JSON.parse(raw),bytes:raw.length}:{ok:false,value:null,bytes:0}}catch(e){return{ok:false,value:null,bytes:0}}}
-  function backupHealth(){const keys=["magicEnglish_v1","treasureWriting_v1","mathQuest_v1","sharedWallet_v1"],parts=keys.map(safeParse),last=Number(localStorage.getItem(BACKUP_AT_KEY)||0),days=last?Math.floor((Date.now()-last)/86400000):null;return{ok:parts.filter(x=>x.ok).length,total:keys.length,bytes:parts.reduce((a,x)=>a+x.bytes,0),last,days};}
+  function backupHealth(){const keys=["magicEnglish_v1","treasureWriting_v1","mathQuest_v1","sharedWallet_v1","sharedPet_v1"],parts=keys.map(safeParse),last=Number(localStorage.getItem(BACKUP_AT_KEY)||0),days=last?Math.floor((Date.now()-last)/86400000):null;return{ok:parts.filter(x=>x.ok).length,total:keys.length,bytes:parts.reduce((a,x)=>a+x.bytes,0),last,days};}
   function hashText(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(16).padStart(8,"0")}
-  function makeBackup(){const keys=["magicEnglish_v1","treasureWriting_v1","mathQuest_v1","sharedWallet_v1","sharedCardDaily_v1"],data={};keys.forEach(k=>{const p=safeParse(k);if(p.ok)data[k]=p.value});if(data.magicEnglish_v1?.pet)data.magicEnglish_v1.pet.pics={};const body=JSON.stringify(data),pack={version:1,createdAt:new Date().toISOString(),checksum:hashText(body),data};return JSON.stringify(pack)}
+  /* ⚠️ 2026-09-15：原来只备份 5 个 key，漏了三个共享档案 ——
+   最要命的是 sharedPet_v1（白白的造型和一身装扮，孩子在英语衣橱里花最多心思的东西），
+   恢复备份后白白会变回默认样子。另外补上三科均衡标记（防恢复后当天重复领 +20 金币）
+   和学习足迹（家长报告的「最近14天去过哪儿」靠它）。 */
+const BACKUP_KEYS = ["magicEnglish_v1","treasureWriting_v1","mathQuest_v1","sharedWallet_v1","sharedCardDaily_v1","sharedPet_v1","sharedSubjectBalance_v1","sharedLearningJourney_v1"];
+function makeBackup(){const keys=BACKUP_KEYS,data={};keys.forEach(k=>{const p=safeParse(k);if(p.ok)data[k]=p.value});if(data.magicEnglish_v1?.pet)data.magicEnglish_v1.pet.pics={};
+  /* 自定义底图是 base64，单张就能到 1.5MB，会把备份码撑到没法复制。
+     丢掉底图、保留 items（搭配才是花心思的部分），恢复后白白用默认身子但衣服还在。 */
+  if(typeof data.sharedPet_v1?.body === "string" && data.sharedPet_v1.body.startsWith("data:")) data.sharedPet_v1 = {...data.sharedPet_v1, body: ""};
+  /* 足迹只留最近 200 条，否则备份码越滚越大 */
+  if(Array.isArray(data.sharedLearningJourney_v1)) data.sharedLearningJourney_v1 = data.sharedLearningJourney_v1.slice(-200);const body=JSON.stringify(data),pack={version:1,createdAt:new Date().toISOString(),checksum:hashText(body),data};return JSON.stringify(pack)}
   function backupCode(raw){return btoa(unescape(encodeURIComponent(raw)))}
   async function compactBackupCode(raw){
     if(typeof CompressionStream==="undefined")return backupCode(raw);
@@ -69,7 +79,7 @@
     let binary="";for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
     return "GZ1."+btoa(binary);
   }
-  function restoreBackup(code){try{const raw=decodeURIComponent(escape(atob(code.trim()))),pack=JSON.parse(raw),body=JSON.stringify(pack.data),allowed=new Set(["magicEnglish_v1","treasureWriting_v1","mathQuest_v1","sharedWallet_v1","sharedCardDaily_v1"]);if(pack.version!==1||pack.checksum!==hashText(body)||!pack.data||typeof pack.data!=="object"||!pack.data.magicEnglish_v1||!pack.data.treasureWriting_v1||!pack.data.mathQuest_v1)return false;Object.entries(pack.data).forEach(([k,v])=>{if(allowed.has(k))localStorage.setItem(k,JSON.stringify(v))});localStorage.setItem(BACKUP_AT_KEY,String(Date.now()));return true}catch(e){return false}}
+  function restoreBackup(code){try{const raw=decodeURIComponent(escape(atob(code.trim()))),pack=JSON.parse(raw),body=JSON.stringify(pack.data),allowed=new Set(BACKUP_KEYS);if(pack.version!==1||pack.checksum!==hashText(body)||!pack.data||typeof pack.data!=="object"||!pack.data.magicEnglish_v1||!pack.data.treasureWriting_v1||!pack.data.mathQuest_v1)return false;Object.entries(pack.data).forEach(([k,v])=>{if(allowed.has(k))localStorage.setItem(k,JSON.stringify(v))});localStorage.setItem(BACKUP_AT_KEY,String(Date.now()));return true}catch(e){return false}}
   async function restoreAnyBackup(code){
     const clean=String(code||"").replace(/\s+/g,"");
     if(!clean.startsWith("GZ1."))return restoreBackup(clean);
